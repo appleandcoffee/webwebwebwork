@@ -2,161 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>hello!</title>
+  <title>Windows Snake XP</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="mainContent">
-    <h1 id="mainText">there is nothing here</h1>
-    <button id="playButton" class="button">Play Snake</button>
-    <div id="hoverMessage">or is there??</div>
+
+  <div id="window-frame">
+    <div class="title-bar">
+      <div class="title-text">🐍 Snake.exe</div>
+      <div class="title-bar-controls">
+        <button onclick="location.reload()">_</button>
+        <button onclick="location.reload()">X</button>
+      </div>
+    </div>
+
+    <div id="gameContainer">
+      <div id="mainContent">
+        <h1 id="mainText" style="font-size: 1.5em;">Welcome to Windows XP</h1>
+        <p>Press the button below to start.</p>
+        <button id="playButton" class="button">Play Snake</button>
+      </div>
+
+      <div id="score">Score: 0</div>
+      <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+      <div id="touchControls">
+        <button class="touch-button" onclick="changeDirection('left')">◀</button>
+        <button class="touch-button" onclick="changeDirection('up')">▲</button>
+        <button class="touch-button" onclick="changeDirection('down')">▼</button>
+        <button class="touch-button" onclick="changeDirection('right')">▶</button>
+      </div>
+    </div>
+
+    <div id="gameOver">
+      <div style="font-weight: bold; font-size: 24px; color: #cc0000;">GAME OVER</div>
+      <div id="restartText">Press R to Restart</div>
+      <button id="touchRestart" class="button" style="margin-top:10px;">Restart Game</button>
+    </div>
   </div>
 
-  <div id="score">Score: 0</div>
-  <canvas id="gameCanvas" width="400" height="400"></canvas>
-
-  <div id="touchControls">
-    <button class="touch-button" onclick="changeDirection('left')">◀️</button>
-    <button class="touch-button" onclick="changeDirection('up')">▲</button>
-    <button class="touch-button" onclick="changeDirection('down')">▼</button>
-    <button class="touch-button" onclick="changeDirection('right')">▶️</button>
-  </div>
-
-  <div id="gameOver">
-    <div>GAME OVER</div>
-    <div id="restartText">Press R to Restart</div>
-    <button id="touchRestart">Touch to Restart</button>
-  </div>
-
-  <button id="muteButton">Mute</button>
+  <button id="muteButton" style="margin-top: 15px;">Mute Audio</button>
 
   <script>
-    // Note: Ensure you have an <audio id="bgm" src="path-to-your-audio.mp3"></audio> 
-    // in your body if you want the audio code in the script to work!
-    const playButton = document.getElementById('playButton');
-    const gameCanvas = document.getElementById('gameCanvas');
-    const ctx = gameCanvas.getContext('2d');
-    const gameOverScreen = document.getElementById('gameOver');
-    const muteButton = document.getElementById('muteButton');
-    const scoreDisplay = document.getElementById('score');
-    const touchControls = document.getElementById('touchControls');
-    const touchRestart = document.getElementById('touchRestart');
-    const restartText = document.getElementById('restartText');
-
-    let snake, direction, lastDirection, food, interval, score = 0, gameRunning = false;
-    let audio = new Audio(); // Placeholder if no tag exists
-
-    function isMobileDevice() {
-      return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    }
-
-    function init() {
-      snake = [{x: 10, y: 10}];
-      direction = {x: 1, y: 0};
-      lastDirection = direction;
-      placeFood();
-      score = 0;
-      updateScore();
-      clearInterval(interval);
-      interval = setInterval(gameLoop, 100);
-      gameRunning = true;
-      gameCanvas.style.display = 'block';
-      scoreDisplay.style.display = 'block';
-      muteButton.style.display = 'block';
-      gameOverScreen.style.display = 'none';
-      if (isMobileDevice()) {
-        touchControls.style.display = 'flex';
-        touchRestart.style.display = 'block';
-        restartText.style.display = 'none';
-      } else {
-        touchControls.style.display = 'none';
-        touchRestart.style.display = 'none';
-        restartText.style.display = 'block';
-      }
-    }
-
-    function placeFood() {
-      food = {
-        x: Math.floor(Math.random() * 20),
-        y: Math.floor(Math.random() * 20)
-      };
-    }
-
-    function updateScore() {
-      scoreDisplay.textContent = "Score: " + score;
-    }
-
-    function gameLoop() {
-      const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
-      if (head.x < 0 || head.y < 0 || head.x >= 20 || head.y >= 20 || snake.some(s => s.x === head.x && s.y === head.y)) {
-        clearInterval(interval);
-        gameRunning = false;
-        showGameOverScreen();
-        return;
-      }
-      snake.unshift(head);
-      if (head.x === food.x && head.y === food.y) {
-        score++;
-        updateScore();
-        placeFood();
-      } else {
-        snake.pop();
-      }
-      draw();
-      lastDirection = direction;
-    }
-
-    function draw() {
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, 400, 400);
-      ctx.fillStyle = "#00ff00";
-      snake.forEach(part => ctx.fillRect(part.x * 20, part.y * 20, 20, 20));
-      ctx.fillStyle = "red";
-      ctx.fillRect(food.x * 20, food.y * 20, 20, 20);
-    }
-
-    function changeDirection(dir) {
-      const newDirection = {
-        left: {x: -1, y: 0},
-        up: {x: 0, y: -1},
-        down: {x: 0, y: 1},
-        right: {x: 1, y: 0}
-      }[dir];
-      if (newDirection.x === -lastDirection.x && newDirection.y === -lastDirection.y) return;
-      direction = newDirection;
-    }
-
-    function showGameOverScreen() {
-      gameOverScreen.style.display = 'flex';
-    }
-
+    /* Keep your existing JavaScript from the previous response here */
+    /* Only update the playButton.onclick to handle the display: */
+    
+    // (Existing JS Logic...)
     playButton.onclick = () => {
       document.getElementById('mainContent').style.display = 'none';
       init();
     };
-
-    muteButton.onclick = () => {
-      audio.muted = !audio.muted;
-      muteButton.textContent = audio.muted ? "Unmute" : "Mute";
-    };
-
-    touchRestart.onclick = () => {
-      init();
-    };
-
-    document.addEventListener('keydown', (e) => {
-      if (!gameRunning && e.key.toLowerCase() === 'r') {
-        init();
-      }
-      if (!gameRunning) return;
-      switch (e.key) {
-        case 'ArrowLeft': changeDirection('left'); break;
-        case 'ArrowUp': changeDirection('up'); break;
-        case 'ArrowDown': changeDirection('down'); break;
-        case 'ArrowRight': changeDirection('right'); break;
-      }
-    });
+    // (...Rest of your JS)
   </script>
 </body>
 </html>
