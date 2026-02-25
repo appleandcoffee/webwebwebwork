@@ -1,9 +1,8 @@
-/* Import the 98.css library */
-@import url("https://unpkg.com/7.css/dist/7.css"); /* Or use 98.css for older look */
+/* Use ONLY 98.css */
 @import url("https://unpkg.com/98.css");
 
 body {
-  background-color: #55aaaa; /* Classic Teal Desktop Color */
+  background-color: #008080; /* Real Windows 98 teal */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,17 +21,17 @@ body {
 }
 
 canvas {
-  border: 2px solid #000;
-  background-color: #000;
-  display: block;
+  border: 2px solid black;
+  background-color: black;
+  image-rendering: pixelated; /* Crisp pixels */
   margin: 10px 0;
 }
 
 #score-container {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
 .status-bar {
-  width: 100%;
-  margin-top: 10px;
+  margin-top: 5px;
 }
