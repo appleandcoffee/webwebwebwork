@@ -54,99 +54,178 @@
 </div>
 
 <script>
-    const playButton = document.getElementById('playButton');
-    const gameCanvas = document.getElementById('gameCanvas');
-    const ctx = gameCanvas.getContext('2d');
-    const scoreDisplay = document.getElementById('score');
-    const mainContent = document.getElementById('mainContent');
-    const gameUI = document.getElementById('gameUI');
-    const gameOverScreen = document.getElementById('gameOver');
-    const touchRestart = document.getElementById('touchRestart');
-    const touchControls = document.getElementById('touchControls');
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-    let snake, direction, lastDirection, food, interval, score = 0, gameRunning = false;
+const playButton = document.getElementById("playButton");
+const mainContent = document.getElementById("mainContent");
+const gameUI = document.getElementById("gameUI");
+const gameOverScreen = document.getElementById("gameOver");
+const touchRestart = document.getElementById("touchRestart");
+const touchControls = document.getElementById("touchControls");
+const scoreDisplay = document.getElementById("score");
 
-    function isMobile() { return /Mobi|Android|iPhone/i.test(navigator.userAgent); }
+const GRID_SIZE = 20;
+const TILE_COUNT = canvas.width / GRID_SIZE;
 
-    function init() {
-      mainContent.style.display = 'none';
-      gameOverScreen.style.display = 'none';
-      gameUI.style.display = 'flex';
-      gameUI.style.flexDirection = 'column';
-      gameUI.style.alignItems = 'center';
-      
-      if(isMobile()) touchControls.style.display = 'flex';
+let snake;
+let direction;
+let nextDirection;
+let food;
+let score;
+let gameInterval;
+let gameRunning = false;
 
-      snake = [{x: 10, y: 10}];
-      direction = {x: 1, y: 0};
-      lastDirection = direction;
-      score = 0;
-      scoreDisplay.textContent = score;
-      placeFood();
-      
-      clearInterval(interval);
-      interval = setInterval(gameLoop, 100);
-      gameRunning = true;
-    }
+/* ===================== INIT ===================== */
 
-    function placeFood() {
-      food = { x: Math.floor(Math.random() * 19), y: Math.floor(Math.random() * 19) };
-    }
+function initGame() {
+  mainContent.style.display = "none";
+  gameOverScreen.style.display = "none";
+  gameUI.style.display = "flex";
+  gameUI.style.flexDirection = "column";
+  gameUI.style.alignItems = "center";
 
-    function gameLoop() {
-      const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
+  if (isMobile()) {
+    touchControls.style.display = "flex";
+  }
 
-      if (head.x < 0 || head.y < 0 || head.x >= 19 || head.y >= 19 || snake.some(s => s.x === head.x && s.y === head.y)) {
-        endGame();
-        return;
-      }
+  snake = [{ x: 9, y: 9 }];
+  direction = { x: 1, y: 0 };
+  nextDirection = direction;
+  score = 0;
+  scoreDisplay.textContent = score;
 
-      snake.unshift(head);
-      if (head.x === food.x && head.y === food.y) {
-        score++;
-        scoreDisplay.textContent = score;
-        placeFood();
-      } else {
-        snake.pop();
-      }
-      draw();
-      lastDirection = direction;
-    }
+  placeFood();
+  draw();
 
-    function draw() {
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, 380, 380);
-      ctx.fillStyle = "#00ff00";
-      snake.forEach(part => ctx.fillRect(part.x * 20, part.y * 20, 18, 18));
-      ctx.fillStyle = "red";
-      ctx.fillRect(food.x * 20, food.y * 20, 18, 18);
-    }
+  clearInterval(gameInterval);
+  gameInterval = setInterval(gameLoop, 100);
+  gameRunning = true;
+}
 
-    function changeDirection(dir) {
-      const moves = { left: {x:-1, y:0}, right: {x:1, y:0}, up: {x:0, y:-1}, down: {x:0, y:1} };
-      const next = moves[dir];
-      if (next.x === -lastDirection.x && next.y === -lastDirection.y) return;
-      direction = next;
-    }
+/* ===================== GAME LOOP ===================== */
 
-    function endGame() {
-      clearInterval(interval);
-      gameRunning = false;
-      gameUI.style.display = 'none';
-      gameOverScreen.style.display = 'block';
-    }
+function gameLoop() {
+  direction = nextDirection;
 
-    playButton.onclick = init;
-    touchRestart.onclick = init;
+  const head = {
+    x: snake[0].x + direction.x,
+    y: snake[0].y + direction.y
+  };
 
-    document.addEventListener('keydown', (e) => {
-      if (!gameRunning && e.key.toLowerCase() === 'r') init();
-      if (!gameRunning) return;
-      if (e.key === 'ArrowLeft') changeDirection('left');
-      if (e.key === 'ArrowUp') changeDirection('up');
-      if (e.key === 'ArrowDown') changeDirection('down');
-      if (e.key === 'ArrowRight') changeDirection('right');
-    });
+  if (isCollision(head)) {
+    endGame();
+    return;
+  }
+
+  snake.unshift(head);
+
+  if (head.x === food.x && head.y === food.y) {
+    score++;
+    scoreDisplay.textContent = score;
+    placeFood();
+  } else {
+    snake.pop();
+  }
+
+  draw();
+}
+
+/* ===================== HELPERS ===================== */
+
+function isCollision(pos) {
+  return (
+    pos.x < 0 ||
+    pos.y < 0 ||
+    pos.x >= TILE_COUNT ||
+    pos.y >= TILE_COUNT ||
+    snake.some(segment => segment.x === pos.x && segment.y === pos.y)
+  );
+}
+
+function placeFood() {
+  do {
+    food = {
+      x: Math.floor(Math.random() * TILE_COUNT),
+      y: Math.floor(Math.random() * TILE_COUNT)
+    };
+  } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
+}
+
+function draw() {
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw snake
+  ctx.fillStyle = "#00ff00";
+  snake.forEach(part => {
+    ctx.fillRect(
+      part.x * GRID_SIZE,
+      part.y * GRID_SIZE,
+      GRID_SIZE - 2,
+      GRID_SIZE - 2
+    );
+  });
+
+  // Draw food
+  ctx.fillStyle = "red";
+  ctx.fillRect(
+    food.x * GRID_SIZE,
+    food.y * GRID_SIZE,
+    GRID_SIZE - 2,
+    GRID_SIZE - 2
+  );
+}
+
+function changeDirection(dir) {
+  const moves = {
+    left: { x: -1, y: 0 },
+    right: { x: 1, y: 0 },
+    up: { x: 0, y: -1 },
+    down: { x: 0, y: 1 }
+  };
+
+  const newDir = moves[dir];
+
+  // Prevent reversing
+  if (
+    newDir.x === -direction.x &&
+    newDir.y === -direction.y
+  ) return;
+
+  nextDirection = newDir;
+}
+
+function endGame() {
+  clearInterval(gameInterval);
+  gameRunning = false;
+  gameUI.style.display = "none";
+  gameOverScreen.style.display = "block";
+}
+
+function isMobile() {
+  return /Mobi|Android|iPhone/i.test(navigator.userAgent);
+}
+
+/* ===================== CONTROLS ===================== */
+
+document.addEventListener("keydown", e => {
+  if (!gameRunning && e.key.toLowerCase() === "r") {
+    initGame();
+    return;
+  }
+
+  if (!gameRunning) return;
+
+  if (e.key === "ArrowLeft") changeDirection("left");
+  if (e.key === "ArrowRight") changeDirection("right");
+  if (e.key === "ArrowUp") changeDirection("up");
+  if (e.key === "ArrowDown") changeDirection("down");
+});
+
+playButton.onclick = initGame;
+touchRestart.onclick = initGame;
 </script>
 </body>
 </html>
+
