@@ -261,10 +261,74 @@ function showPage(name) {
 
 /* CONTACT FORM */
 function handleSubmit(btn) {
-  btn.textContent = 'Sent ✓';
-  btn.style.background = 'linear-gradient(135deg,#4AF0A0,#2ad080)';
+  // Grab fields
+  const form = btn.closest('.contact-form');
+  const nameEl = form.querySelectorAll('.form-input')[0];
+  const emailEl = form.querySelectorAll('.form-input')[1];
+  const msgEl = form.querySelector('.form-textarea');
+
+  // Clear previous errors
+  [nameEl, emailEl, msgEl].forEach(el => {
+    el.style.borderColor = '';
+    const prev = el.nextElementSibling;
+    if (prev && prev.classList.contains('form-error')) prev.remove();
+  });
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  let valid = true;
+
+  function flagError(el, msg) {
+    el.style.borderColor = '#FF6B6B';
+    const err = document.createElement('span');
+    err.className = 'form-error';
+    err.style.cssText = 'font-size:0.7rem;color:#FF6B6B;font-family:DM Mono,monospace;margin-top:4px;display:block;';
+    err.textContent = msg;
+    el.insertAdjacentElement('afterend', err);
+    valid = false;
+  }
+
+  if (!nameEl.value.trim()) flagError(nameEl, 'Name is required.');
+  if (!emailEl.value.trim()) flagError(emailEl, 'Email is required.');
+  else if (!emailRegex.test(emailEl.value.trim())) flagError(emailEl, 'Enter a valid email address.');
+  if (!msgEl.value.trim()) flagError(msgEl, 'Message cannot be blank.');
+
+  if (!valid) return;
+
+  // Send via Formspree (replace YOUR_FORM_ID with your actual ID from formspree.io)
+  const FORMSPREE_ID = 'mqewvkrk';
+
+  if (FORMSPREE_ID === 'mqewvkrk') {
+    // Fallback: open mailto
+    window.location.href = `mailto:help@zenkeey.org?subject=${encodeURIComponent(form.querySelectorAll('.form-input')[2]?.value || 'Contact form')}&body=${encodeURIComponent(msgEl.value)}`;
+    return;
+  }
+
+  btn.textContent = 'Sending…';
   btn.disabled = true;
-  setTimeout(() => { btn.textContent = 'Send Message →'; btn.style.background = ''; btn.disabled = false; }, 3000);
+
+  fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      name: nameEl.value.trim(),
+      email: emailEl.value.trim(),
+      subject: form.querySelectorAll('.form-input')[2]?.value.trim() || '',
+      message: msgEl.value.trim()
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      btn.textContent = 'Sent ✓';
+      btn.style.background = 'linear-gradient(135deg,#4AF0A0,#2ad080)';
+      form.querySelectorAll('.form-input, .form-textarea').forEach(el => el.value = '');
+      setTimeout(() => { btn.textContent = 'Send Message →'; btn.style.background = ''; btn.disabled = false; }, 3000);
+    } else {
+      btn.textContent = 'Failed — try again';
+      btn.disabled = false;
+    }
+  })
+  .catch(() => { btn.textContent = 'Error — try again'; btn.disabled = false; });
 }
 
 /* 3D SNAKE */
