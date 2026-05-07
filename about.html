@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Five Page Website Project</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0d1b2a;
+      --steel:  #1e3a5f;
+      --sky:    #4a9edd;
+      --ice:    #a8d8f0;
+      --cream:  #f5f0e8;
+      --gold:   #e8a020;
+      --gray:   #8a9ab0;
+      --locked: #3a4a5a;
+    }
+
+    body {
+      background: var(--navy);
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── WRAPPER ── */
+    .page-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-left: 1px solid rgba(74,158,221,.2);
+      border-right: 1px solid rgba(74,158,221,.2);
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, var(--steel) 0%, var(--navy) 60%);
+      padding: 56px 48px 40px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 2px solid var(--sky);
+    }
+    header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 40px,
+        rgba(74,158,221,.04) 40px,
+        rgba(74,158,221,.04) 41px
+      );
+    }
+    header .eyebrow {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: .3em;
+      font-size: .85rem;
+      color: var(--sky);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      letter-spacing: .05em;
+      color: #fff;
+      line-height: 1;
+    }
+    header h1 span { color: var(--sky); }
+
+    /* ── NAV ── */
+    nav {
+      background: rgba(255,255,255,.04);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(74,158,221,.25);
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      padding: 0 24px;
+      flex-wrap: wrap;
+    }
+    nav a {
+      display: inline-block;
+      padding: 14px 22px;
+      color: var(--ice);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: .82rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      position: relative;
+      transition: color .2s;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 22px; right: 22px;
+      height: 2px;
+      background: var(--sky);
+      transform: scaleX(0);
+      transition: transform .25s;
+    }
+    nav a:hover { color: #fff; }
+    nav a:hover::after { transform: scaleX(1); }
+
+    /* ── BODY GRID ── */
+    .body-grid {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      min-height: 620px;
+    }
+
+    /* ── SIDEBAR ── */
+    aside {
+      background: var(--steel);
+      border-right: 1px solid rgba(74,158,221,.2);
+      padding: 28px 20px;
+    }
+    aside h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: .2em;
+      color: var(--sky);
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(74,158,221,.3);
+    }
+    aside a {
+      display: block;
+      color: var(--ice);
+      text-decoration: none;
+      font-size: .82rem;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      transition: color .2s, padding-left .2s;
+    }
+    aside a:hover { color: var(--sky); padding-left: 6px; }
+
+    /* ── MAIN CONTENT ── */
+    main {
+      background: var(--cream);
+      color: var(--navy);
+      padding: 40px 48px 56px;
+    }
+
+    /* ── INTRO SECTION ── */
+    .intro h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: .08em;
+      color: var(--steel);
+      margin-bottom: 14px;
+    }
+    .intro p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: #2c3e50;
+      max-width: 700px;
+    }
+    .intro p + p { margin-top: 14px; }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .tag {
+      background: var(--steel);
+      color: var(--ice);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--steel), transparent);
+      margin: 36px 0;
+    }
+
+    /* ── CERT TIMELINE ── */
+    .cert-section h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: .1em;
+      color: var(--steel);
+      margin-bottom: 32px;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--sky), rgba(74,158,221,.15));
+    }
+
+    .cert-item {
+      position: relative;
+      margin-bottom: 32px;
+    }
+
+    /* Dot on the line */
+    .cert-item::before {
+      content: '';
+      position: absolute;
+      left: -22px; top: 18px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 2px solid;
+      background: #fff;
+    }
+    .cert-item.earned::before  { border-color: var(--gold); background: var(--gold); }
+    .cert-item.locked::before  { border-color: var(--gray); background: #ccc; }
+
+    .cert-card {
+      border-radius: 10px;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cert-item.earned  .cert-card {
+      background: linear-gradient(135deg, #fff8ee 0%, #fffdf8 100%);
+      border: 1.5px solid var(--gold);
+      box-shadow: 0 2px 18px rgba(232,160,32,.12);
+    }
+    .cert-item.locked  .cert-card {
+      background: #e8edf2;
+      border: 1.5px solid #c0cdd8;
+      opacity: .75;
+    }
+
+    .cert-icon {
+      width: 56px; height: 56px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .cert-item.earned  .cert-icon { background: rgba(232,160,32,.15); }
+    .cert-item.locked  .cert-icon { background: rgba(100,120,140,.15); filter: grayscale(1); }
+
+    .lock-badge {
+      position: absolute;
+      bottom: -4px; right: -4px;
+      width: 22px; height: 22px;
+      background: var(--locked);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .65rem;
+      color: #fff;
+      border: 2px solid #e8edf2;
+    }
+
+    .cert-info { flex: 1; }
+    .cert-info .cert-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--navy);
+      margin-bottom: 3px;
+    }
+    .cert-item.locked .cert-info .cert-name { color: #5a6a7a; }
+
+    .cert-info .cert-org {
+      font-size: .8rem;
+      color: var(--gray);
+      margin-bottom: 6px;
+    }
+
+    .cert-date {
+      display: inline-block;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .cert-item.earned  .cert-date { background: var(--gold); color: #fff; }
+    .cert-item.locked  .cert-date { background: #c0cdd8; color: #5a6a7a; }
+
+    .earned-badge {
+      position: absolute;
+      top: 14px; right: 16px;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      border-top: 1px solid rgba(74,158,221,.2);
+      text-align: right;
+      padding: 14px 32px;
+      font-size: .85rem;
+      color: var(--gray);
+      letter-spacing: .05em;
+    }
+    footer span { color: var(--sky); font-weight: 600; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="eyebrow">IHS Website Design · 25/26</div>
+    <h1>Five Page <span>Website</span></h1>
+  </header>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="resume.html">Resume</a>
+    <a href="hobbies.html">Hobbies</a>
+    <a href="school_life.html">School Life</a>
+    <a href="school_classes.html">School Schedule</a>
+  </nav>
+
+  <!-- BODY GRID -->
+  <div class="body-grid">
+
+    <!-- SIDEBAR -->
+    <aside>
+      <h2>Links</h2>
+      <a href="myfirstpage.html">First Page</a>
+      <a href="avithakurfontsassignment.html">My Name in Fonts</a>
+      <a href="https://www.tynker.com/code/view/68daaea8568fe81ac10dfbc3/">October Calendar</a>
+      <a href="https://www.tynker.com/code/view/68dfef03a97ba44c664284a9/">HTML Table Layout</a>
+      <a href="https://iusd.instructure.com/courses/143315/assignments/1908437">Photoshop Pic</a>
+      <a href="https://www.tynker.com/code/view/6900e340c8a3b146886c1a8a/">Fan Page</a>
+      <a href="https://www.tynker.com/code/view/690b7dedde1db95e7f6fe48c/">Frameset</a>
+      <a href="https://www.tynker.com/code/view/68cad6e56de72e42fd36c66e/">1st Home Page</a>
+      <a href="https://www.tynker.com/code/view/68dfef03a97ba44c664284a9/">Begin 5-Page Site</a>
+      <a href=" ">Assignment #10</a>
+    </aside>
+
+    <!-- MAIN -->
+    <main>
+
+      <!-- INTRO -->
+      <section class="intro">
+        <h2>Welcome to My Page</h2>
+        <p>
+          Technology has been a driving force in my life for as long as I can remember — not just using it,
+          but understanding how it works from the inside out. Before I ever wrote a line of code, I was deep
+          into things like setting up virtual machines, building computers from scratch, and modding game
+          consoles and phones. Exploring legacy operating systems like Windows 95 and 98 gave me a real
+          appreciation for how far computing has come.
+        </p>
+        <p>
+          Over the summer I took things a step further by building and hosting my own website — registered
+          a domain, deployed with GitHub Pages, the whole deal. That project lit a fire under me, and
+          freshman year I sat for the CompTIA A+ exam and passed, earning my first industry certification.
+          I'm just getting started.
+        </p>
+        <p>
+          Outside the tech world, I'm a runner. I tried out for the Cross Country team this year and made it.
+          At the Woodbridge XC meet I PR'd the 3-mile in 18:40 — and I'm training to break 18 minutes.
+        </p>
+        <div class="tag-row">
+          <span class="tag">CompTIA A+</span>
+          <span class="tag">Web Dev</span>
+          <span class="tag">Networking</span>
+          <span class="tag">Hardware</span>
+          <span class="tag">Cross Country</span>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- CERT TIMELINE -->
+      <section class="cert-section">
+        <h2>Certification Roadmap</h2>
+
+        <div class="timeline">
+
+          <!-- EARNED -->
+          <div class="cert-item earned">
+            <div class="cert-card">
+              <div class="cert-icon">🏆</div>
+              <div class="cert-info">
+                <div class="cert-name">CompTIA A+</div>
+                <div class="cert-org">CompTIA</div>
+                <span class="cert-date">May 2025</span>
+              </div>
+              <div class="earned-badge">✓ Earned</div>
+            </div>
+          </div>
+
+          <!-- LOCKED 1 -->
+          <div class="cert-item locked">
+            <div class="cert-card">
+              <div class="cert-icon">
+                ☁️
+                <div class="lock-badge">🔒</div>
+              </div>
+              <div class="cert-info">
+                <div class="cert-name">Microsoft Certified: Azure Fundamentals</div>
+                <div class="cert-org">Microsoft · AZ-900</div>
+                <span class="cert-date">Goal: July 2026</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- LOCKED 2 -->
+          <div class="cert-item locked">
+            <div class="cert-card">
+              <div class="cert-icon">
+                🌐
+                <div class="lock-badge">🔒</div>
+              </div>
+              <div class="cert-info">
+                <div class="cert-name">CompTIA Network+</div>
+                <div class="cert-org">CompTIA</div>
+                <span class="cert-date">Goal: July 2027</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div><!-- /body-grid -->
+
+  <!-- FOOTER -->
+  <footer><span>IHS</span> Website Design 25/26</footer>
+
+</div>
+</body>
+</html>
