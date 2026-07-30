@@ -297,12 +297,6 @@ function handleSubmit(btn) {
   // Send via Formspree (replace YOUR_FORM_ID with your actual ID from formspree.io)
   const FORMSPREE_ID = 'mqewvkrk';
 
-if (FORMSPREE_ID === 'mqewvkrk') {
-  // Fallback: open mailto
-  window.location.href = `mailto:help@zenkeey.org?subject=${encodeURIComponent(form.querySelectorAll('.form-input')[2]?.value || 'Contact form')}&body=${encodeURIComponent(msgEl.value)}`;
-  return;
-}
-
   btn.textContent = 'Sending…';
   btn.disabled = true;
 
