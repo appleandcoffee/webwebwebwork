@@ -1,0 +1,1 @@
+export async function resolve(specifier,context,next){if(specifier==='./three.module.js'&&!context.parentURL?.endsWith('three-test-stub.mjs'))return {url:new URL('./three-test-stub.mjs',import.meta.url).href,shortCircuit:true};return next(specifier,context)}

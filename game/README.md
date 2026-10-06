@@ -22,3 +22,17 @@ Crashes transfer momentum, rotate cars, dent bodywork and produce sparks. Heavy 
 Run `node game/tests/physics.test.mjs` in the GitHub repository, or `node tests/physics.test.mjs` in the standalone Site checkout. Tests cover steering direction, centered wall rebound, off-center angular impulse, momentum conservation and wall containment.
 
 JavaScript syntax and physics tests were checked. Browser rendering and interactive handling have not been visually playtested in the build environment.
+
+## On-foot update
+
+You now start as Kai Mercer next to the sports car. WASD moves relative to the camera; drag on the world to look around. Shift sprints, Space jumps, and holding C crouches. Pedestrians walk sidewalk loops, pause and glance around, and run when cars or gunfire approach.
+
+F enters the nearest stopped vehicle from its driver's side (within 3 meters of the door). The door opens, Kai reaches and crouches into the seat, and it closes. F exits below 2.5 m/s; if the driver side is blocked, the passenger door is used. Parked vehicles are available nearby. Changing cars preserves the previous vehicle in the world.
+
+1 = unarmed, 2 = pistol, 3 = SMG. Q or the loadout button opens the selection panel. Click fires; hold click for automatic SMG fire. R reloads on foot and repairs/resets while driving. Shots have a tracer and impact sparks; nearby pedestrians react and flee. This update does not implement enemy combat, pedestrian health/death, or a player death system.
+
+Animation includes idle breathing, weight shift, blinking, walking/running, crouching, jumping, articulated door entry/exit, a seated driver, steering wheel movement, recoil, reload gestures, acceleration/braking pitch, body roll and brake lights. Character models and motions are procedural; these are not motion-captured or photoreal human assets.
+
+Additional tests: `node game/tests/character.test.mjs` (from repository root). Covers vehicle eligibility, blocked exits, entry/exit completion, jump landing, weapon ammo and reloading, and rig geometry. Rendering remains unverified by a browser playtest.
+
+Combined gameplay check (renderer mocked, not a visual test): `node --no-warnings --loader ./game/tests/three-test-loader.mjs ./game/tests/integration.test.mjs`. Checks startup, on-foot movement, entering/driving/exiting, firing, reloading, selection and pause.

@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {body} from '../physics.mjs';
+import {doorPoint,nearestVehicle,exitPoint,transitionPose,movePerson,loadout,fireWeapon,reloadWeapon,tickWeapon} from '../character-state.mjs';
+import {createPerson,posePerson,createPeople} from '../people.js';
+import {createCar,animateCar} from '../visuals.js';
+import * as T from '../three.module.js';
+const vehicle={b:body(0,0),active:true,police:false,mesh:createCar('#889977')};const door=doorPoint(vehicle.b);assert.equal(nearestVehicle(door,[vehicle]),vehicle);vehicle.b.vz=10;assert.equal(nearestVehicle(door,[vehicle]),null);vehicle.b.vz=0;
+const wall=body(1.85,0,0,0,.4,5);assert.equal(exitPoint(vehicle.b,[wall]).side,-1);assert.equal(exitPoint(vehicle.b,[wall,body(-1.85,0,0,0,.4,5)]),null);
+const person={x:0,z:0};movePerson(person,2,1,[wall]);assert.equal(person.x,0);assert.equal(person.z,1);
+const inside={x:.3,z:0};assert.equal(transitionPose(0,door,inside,true).visible,true);assert.equal(transitionPose(1,door,inside,true).visible,false);assert.equal(transitionPose(1,door,inside,false).x,door.x);
+const ammo=loadout()[1];for(let i=0;i<12;i++){assert(fireWeapon(ammo,1));tickWeapon(ammo,1,1)}assert(!fireWeapon(ammo,1));assert(reloadWeapon(ammo,1));assert(!fireWeapon(ammo,1));tickWeapon(ammo,1,1.5);assert.equal(ammo.ammo,12);assert.equal(ammo.reserve,60);
+const mesh=createPerson({hero:true});for(let i=0;i<60;i++)posePerson(mesh,{dt:1/60,speed:5,weapon:2,reloading:true});mesh.updateMatrixWorld(true);assert(mesh.userData.gun.visible);assert(mesh.userData.mag.visible);assert(mesh.userData.arms[0].upper.rotation.x!==0);assert.equal(vehicle.mesh.userData.doors.length,2);animateCar(vehicle.mesh,vehicle.b,10,.5,.016,1);
+const scene=new T.Scene();let selected=false;const people=createPeople(scene,{obstacles:[],getVehicles:()=>[vehicle],getVehicle:()=>vehicle,takeVehicle:()=>selected=true,toast:()=>{}});people.state.x=door.x;people.state.z=door.z;people.interact();assert.equal(people.state.mode,'entering');for(let i=0;i<201;i++)people.step(1/120,{},0);assert.equal(people.state.mode,'driving');assert(selected);assert(!people.hero.visible);people.interact();for(let i=0;i<201;i++)people.step(1/120,{},0);assert.equal(people.state.mode,'foot');assert(people.hero.visible);assert.equal(vehicle.mesh.userData.doors[0].rotation.y,0);
+people.step(.016,{' ':true},0);assert(people.state.jumpY>0);for(let i=0;i<200;i++)people.step(1/120,{},0);assert.equal(people.state.jumpY,0);
+console.log('Passed: stopped-car entry, blocked-door exit selection, pedestrian wall sliding, entry/exit state and animation completion, jump landing, ammo/reload, rig poses and car door geometry.');
